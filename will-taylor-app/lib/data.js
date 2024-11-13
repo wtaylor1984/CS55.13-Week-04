@@ -2,24 +2,39 @@
 import fs from 'fs';
 import path from 'path';
 
+import got from 'got';
+import { error } from 'console';
+
 // get filepath to data directory
 const dataDir = path.join( process.cwd(), 'data' );
 
+const dataURL = "https://dev-cs55-fall2024-williamtaylor.pantheonsite.io/wp-json/twentytwentyone-child/v1/latest-posts/1";
+
 // function returns names and ids for all json objects in array, sorted by name property
-export function getSortedList() {
+export async function getSortedList() {
   // get filepath to json file
-  const filePath = path.join(dataDir, 'data.json');
+  //const filePath = path.join(dataDir, 'data.json');
   
   // load json file contents
-  const jsonString = fs.readFileSync(filePath,'utf8');
+  //const jsonString = fs.readFileSync(filePath,'utf8');
+
+  let jsonString;
+  try {
+    jsonString = await got(dataURL);
+    console.log(jsonString.body);
+  } catch(error)
+  {
+    jsonString.body = [];
+    console.log(error);
+  }
   
   // convert string from file into json array object
-  const jsonObj = JSON.parse(jsonString);
-
+  //const jsonObj = JSON.parse(jsonString);
+  const jsonObj = JSON.parse(jsonString.body);
   // sort json array by name property
   jsonObj.sort(
     function(a,b) {
-      return a.name.localeCompare(b.name);
+      return a.post_title.localeCompare(b.post_title);
     }
   );
 
@@ -27,30 +42,43 @@ export function getSortedList() {
   return jsonObj.map(
     function(item) {
       return {
-        id: item.id.toString(),
-        name: item.name
+        id: item.ID.toString(),
+        name: item.post_title
       };
     }
   );
 }
 
 // function returns ids for all json objects in array
-export function getAllIds() {
+export async function getAllIds() {
   // get filepath to json file
-  const filePath = path.join(dataDir, 'data.json');
+  //const filePath = path.join(dataDir, 'data.json');
   
   // load json file contents
-  const jsonString = fs.readFileSync(filePath,'utf8');
+  //const jsonString = fs.readFileSync(filePath,'utf8');
+
+
+  let jsonString;
+
+  try {
+
+    jsonString = await got(dataURL);
+    console.log(jsonString.body);
+
+  } catch(error)
+  {
+    jsonString.body = [];
+    console.log(error);
+  }
   
   // convert string from file into json array object
-  const jsonObj = JSON.parse(jsonString);
-
-  // use map() on array to extract just id + name properties into new array of obj values
+  //const jsonObj = JSON.parse(jsonString);
+  const jsonObj = JSON.parse(jsonString.body);
   return jsonObj.map(
     function(item) {
       return {
         params: {
-          id: item.id.toString()
+          id: item.ID.toString()
         }
       };
     }
@@ -62,45 +90,39 @@ export function getAllIds() {
 // This one is too simple and I want to get all the information in the app in a better way!
 export async function getData(idRequested) {
   // get filepath to json file
-  const filePath = path.join(dataDir, 'data.json');
+  //const filePath = path.join(dataDir, 'data.json');
   
   // load json file contents
-  const jsonString = fs.readFileSync(filePath,'utf8');
+  //const jsonString = fs.readFileSync(filePath,'utf8');
+  let jsonString;
+
+  try {
+
+    jsonString = await got(dataURL);
+    console.log(jsonString.body);
+
+  } catch(error)
+  {
+    jsonString.body = [];
+    console.log(error);
+  }
   
   // convert string from file into json array object
-  const jsonObj = JSON.parse(jsonString);
+  const jsonObj = JSON.parse(jsonString.body);
 
   // find object value in array that has matching id
-  console.log(idRequested);
-  const objMatch = jsonObj.filter(
-    function(obj) {
-      return obj.id.toString() === idRequested;
-    }
-  );
+  const objMatch = jsonObj.filter(obj => {
+    return obj.ID.toString() === idRequested;
+  });
 
   // extract object value in filtered array if any
   let objReturned;
   if (objMatch.length > 0) {
-    objReturned = objMatch;
-
-    //we found something, now, let's grab all the pets
-    // get filepath to json file
-    const filePath2 = path.join(dataDir, 'animals.json');
-    // load json file contents
-    const jsonString2 = fs.readFileSync(filePath2,'utf8');
-    // convert string from file into json array object
-    const jsonObj2 = JSON.parse(jsonString2);
-    // find object value in array that has matching id
-    const objMatch2 = jsonObj2.filter(
-      function(obj) {
-        return obj.ownerID.toString() === idRequested;
-      }
-    );
-    //objReturned.pets = objMatch2;
-    objReturned.push(objMatch2);
+    objReturned = objMatch[0];
   } else {
     objReturned = {};
   }
+  // console.log(objReturned);
 
   // return object value found
   return objReturned;

@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
+    "got": "^14.4.4",
     "next": "14.2.12",
     "react": "^18",
     "react-dom": "^18"

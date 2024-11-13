@@ -34,7 +34,7 @@ export default function Entry( { itemData } ) {
   
   return (
     <Layout>
-      <h1>{itemData.post_title}&apos;s Info and Pets</h1>
+      <h1>Post Name: {itemData.post_title}</h1>
       <article className="card col-6">
         <div className="card-body">
           <h4 className="card-title">{itemData.post_title}</h4>

@@ -17,7 +17,7 @@ export default function Home( { allData } ) {
   return (
     <>
       <Layout home>
-      <h1>List of Names</h1>
+      <h1>Post info from WP</h1>
       <div className="list-group">
         {allData.map(
             ({id, name}) => (

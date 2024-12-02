@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import Layout from '../components/layout';
 import { getAllIds, getData } from '../lib/data';
 
@@ -11,7 +12,8 @@ export async function getStaticProps( { params } ) {
     props: {
       itemData
       
-    }
+    },
+    revalidate: 60
   };
 }
 
